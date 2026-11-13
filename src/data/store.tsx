@@ -23,6 +23,7 @@ import { loadLocal, loadWhoopCache, saveLocal, saveWhoopCache } from './localRep
 import { initialState, normalizeState, type AppState } from './state'
 import { remote } from './sync'
 import { syncWhoop } from './whoopClient'
+import { syncReminders } from './push'
 
 export type Action =
   | { type: 'replace'; state: AppState }
@@ -209,6 +210,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       rawDispatch({ type: 'log', log: { sessionId: sid, date: pd.date, status: 'done', durationMin: a.durationMin, distanceKm: a.distanceKm, elevationM: a.elevationM, avgHr: a.avgHr, strain: a.strain, whoopWorkoutId: wid, notes: 'automatisch aus WHOOP übernommen' } })
     }
   }, [whoopReal, engine, state.logs, state.workoutAssignments])
+
+  // Erinnerungen bei Plan-/Erholungsänderungen neu hinterlegen (entprellt)
+  const notif = state.settings.notifications
+  useEffect(() => {
+    if (!notif.bedtime && !notif.nap) return
+    const t = setTimeout(() => syncReminders(engine, today, notif).catch((e) => console.warn(e)), 3000)
+    return () => clearTimeout(t)
+  }, [engine, today, notif])
 
   const value = useMemo(() => ({ state, dispatch, engine, today, whoop, whoopSource: whoopSource as StoreValue['whoopSource'], setWhoop, refreshWhoop, syncStatus }), [state, dispatch, engine, today, whoop, whoopSource, setWhoop, refreshWhoop, syncStatus])
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>

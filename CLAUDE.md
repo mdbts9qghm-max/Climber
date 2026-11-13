@@ -39,5 +39,5 @@ Die vollständige Vorgabe ist die SPEC (vom Nutzer als PDF geliefert). Architekt
 - [x] Phase 3 – Oberfläche (alle Ansichten, Playwright-Check im iPhone-Format: `npm run e2e`)
 - [x] Phase 4 – Supabase (Schema + RLS lokal gegen Postgres 16 geprüft, Login per E-Mail-Code, Sync, Umzug; Anleitung `docs/SUPABASE.md`)
 - [x] Phase 5 – WHOOP (Edge Functions: OAuth, Sync mit Token-Refresh, Webhook mit Signaturprüfung; Deno-Tests; Anleitung `docs/WHOOP.md`)
-- [ ] Phase 6 – Automatik
+- [x] Phase 6 – Automatik (Webhooks, Abruf beim Öffnen + pg_cron, Web-Push-Erinnerungen, Service Worker offline; Anleitung `docs/AUTOMATIK.md`)
 - [ ] Phase 7 – Livegang

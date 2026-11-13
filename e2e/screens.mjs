@@ -77,6 +77,18 @@ try {
     await page.screenshot({ path: `${out}/${n}.png`, fullPage: true })
     console.log('✓', n)
   }
+  // Offline: Heute-Ansicht muss nach dem ersten Laden ohne Netz lesbar sein (Service Worker)
+  await page.goto(`${BASE}/?date=${DATE}`)
+  await page.evaluate(() => navigator.serviceWorker.ready)
+  await page.waitForTimeout(800)
+  await ctx.setOffline(true)
+  await page.reload()
+  await page.waitForTimeout(800)
+  const offlineOk = await page.getByRole('heading', { name: 'Heute' }).isVisible()
+  await page.screenshot({ path: `${out}/24-offline.png` })
+  console.log(offlineOk ? '✓ offline lesbar' : '✗ offline nicht lesbar')
+  if (!offlineOk) errors.push('Heute-Ansicht offline nicht lesbar')
+  await ctx.setOffline(false)
   // Breite prüfen: kein horizontales Scrollen
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1)
   if (overflow) errors.push('Horizontaler Overflow')

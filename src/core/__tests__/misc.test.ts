@@ -81,3 +81,16 @@ describe('Engine und Auswertungen', () => {
     expect(v.adjusted.every((a) => !a.changed)).toBe(true)
   })
 })
+
+describe('Erinnerungen', () => {
+  it('Nap- und Schlafenszeit-Erinnerung mit Vorlauf', async () => {
+    const { upcomingReminders } = await import('../reminders')
+    const e = buildEngine({ settings: S, overrides: OV, today: '2026-11-16' })
+    const r = upcomingReminders(e, '2026-11-16', 5, { bedtime: true, nap: true }, Date.parse('2026-11-15T00:00:00Z'))
+    const nap = r.find((x) => x.id === 'nap:2026-11-17')!
+    expect(nap.fireAt).toBe('2026-11-17T13:50:00.000Z') // 14:50 Berlin (MEZ)
+    const bed = r.find((x) => x.id === 'bed:2026-11-20')! // Abend vor Tagschicht: 21:45 → Erinnerung 21:15
+    expect(bed.fireAt).toBe('2026-11-20T20:15:00.000Z')
+    expect(r.some((x) => x.id === 'bed:2026-11-17')).toBe(false) // Nachtschicht: keine Nacht
+  })
+})
