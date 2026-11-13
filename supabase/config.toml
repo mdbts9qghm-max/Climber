@@ -1,0 +1,20 @@
+# Supabase CLI-Konfiguration (nur Edge Functions relevant)
+project_id = "ehrwald-trainer"
+
+[functions.whoop-auth]
+verify_jwt = true
+
+[functions.whoop-sync]
+# Prüft selbst: Nutzer-JWT oder x-cron-secret (täglicher Abruf für alle)
+verify_jwt = false
+
+[functions.whoop-callback]
+# Wird von WHOOP aufgerufen (Browser-Redirect) – Absicherung über den state-Parameter
+verify_jwt = false
+
+[functions.whoop-webhook]
+# Wird von WHOOP aufgerufen – Absicherung über die HMAC-Signatur
+verify_jwt = false
+
+[functions.push-reminders]
+verify_jwt = false

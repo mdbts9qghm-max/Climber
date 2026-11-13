@@ -5,6 +5,8 @@ import {
   applySessionResults,
   applyStrengthTest,
   buildEngine,
+  matchWorkouts,
+  workoutActuals,
   sampleWhoop,
   todayBerlin,
   type AdjustmentDecision,
@@ -20,6 +22,7 @@ import {
 import { loadLocal, loadWhoopCache, saveLocal, saveWhoopCache } from './localRepo'
 import { initialState, normalizeState, type AppState } from './state'
 import { remote } from './sync'
+import { syncWhoop } from './whoopClient'
 
 export type Action =
   | { type: 'replace'; state: AppState }
@@ -113,6 +116,7 @@ interface StoreValue {
   whoop: WhoopData | null
   whoopSource: 'whoop' | 'demo' | null
   setWhoop: (d: WhoopData | null) => void
+  refreshWhoop: (force?: boolean) => Promise<string>
   syncStatus: string
 }
 
@@ -140,10 +144,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (!alive) return
       if (remoteState && remoteState.updatedAt > stateRef.current.updatedAt) rawDispatch({ type: 'replace', state: normalizeState(remoteState) })
       else remote.push(stateRef.current).then((st) => alive && st && setSyncStatus(st)) // Umzug bzw. lokale Änderungen nachreichen
-      const w = await remote.fetchWhoop()
+      let w = await remote.fetchWhoop()
       if (alive && w) {
         setWhoopReal(w)
         saveWhoopCache(w)
+      }
+      // Fallback zum Webhook: Abruf beim Öffnen der App (Edge Function drosselt auf 15 min)
+      const r = await syncWhoop()
+      if (alive && r.ok && !r.skipped) {
+        w = await remote.fetchWhoop()
+        if (w) {
+          setWhoopReal(w)
+          saveWhoopCache(w)
+        }
       }
     })
     return () => {
@@ -155,6 +168,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setWhoopReal(d)
     saveWhoopCache(d)
   }, [])
+  const refreshWhoop = useCallback(async (force = true) => {
+    const r = await syncWhoop({ force })
+    const w = await remote.fetchWhoop()
+    setWhoop(w)
+    return r.ok ? 'WHOOP-Daten aktualisiert.' : `WHOOP: ${r.error ?? 'Fehler'}`
+  }, [setWhoop])
 
   const demo = useMemo(
     () => (state.demoMode ? sampleWhoop(state.settings, state.overrides, addDays(state.settings.shift.planStart, -40), today) : null),
@@ -177,7 +196,21 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [state.settings, state.overrides, state.strength, state.logs, state.manual, whoop, today],
   )
 
-  const value = useMemo(() => ({ state, dispatch, engine, today, whoop, whoopSource: whoopSource as StoreValue['whoopSource'], setWhoop, syncStatus }), [state, dispatch, engine, today, whoop, whoopSource, setWhoop, syncStatus])
+  // WHOOP-Workouts automatisch geplanten Einheiten zuordnen und als Ist-Werte übernehmen
+  useEffect(() => {
+    if (!whoopReal?.workouts.length) return
+    const matches = matchWorkouts(engine.plan.days, whoopReal.workouts, state.workoutAssignments)
+    for (const [wid, sid] of matches) {
+      if (state.logs.some((l) => l.sessionId === sid || l.whoopWorkoutId === wid)) continue
+      const w = whoopReal.workouts.find((x) => x.id === wid)
+      const pd = engine.plan.days.find((d) => d.sessions.some((x) => x.id === sid))
+      if (!w || !pd) continue
+      const a = workoutActuals(w)
+      rawDispatch({ type: 'log', log: { sessionId: sid, date: pd.date, status: 'done', durationMin: a.durationMin, distanceKm: a.distanceKm, elevationM: a.elevationM, avgHr: a.avgHr, strain: a.strain, whoopWorkoutId: wid, notes: 'automatisch aus WHOOP übernommen' } })
+    }
+  }, [whoopReal, engine, state.logs, state.workoutAssignments])
+
+  const value = useMemo(() => ({ state, dispatch, engine, today, whoop, whoopSource: whoopSource as StoreValue['whoopSource'], setWhoop, refreshWhoop, syncStatus }), [state, dispatch, engine, today, whoop, whoopSource, setWhoop, refreshWhoop, syncStatus])
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 
