@@ -139,6 +139,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     remote.init((status) => alive && setSyncStatus(status)).then(async (remoteState) => {
       if (!alive) return
       if (remoteState && remoteState.updatedAt > stateRef.current.updatedAt) rawDispatch({ type: 'replace', state: normalizeState(remoteState) })
+      else remote.push(stateRef.current).then((st) => alive && st && setSyncStatus(st)) // Umzug bzw. lokale Änderungen nachreichen
       const w = await remote.fetchWhoop()
       if (alive && w) {
         setWhoopReal(w)

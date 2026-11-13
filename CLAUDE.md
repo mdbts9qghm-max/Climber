@@ -37,7 +37,7 @@ Die vollständige Vorgabe ist die SPEC (vom Nutzer als PDF geliefert). Architekt
 - [x] Phase 1 – Planung (Architektur, Datenmodell, Algorithmen, CLAUDE.md, Git)
 - [x] Phase 2 – Kernlogik + Tests (86 Vitest-Tests, alle SPEC-11-Szenarien)
 - [x] Phase 3 – Oberfläche (alle Ansichten, Playwright-Check im iPhone-Format: `npm run e2e`)
-- [ ] Phase 4 – Supabase
+- [x] Phase 4 – Supabase (Schema + RLS lokal gegen Postgres 16 geprüft, Login per E-Mail-Code, Sync, Umzug; Anleitung `docs/SUPABASE.md`)
 - [ ] Phase 5 – WHOOP
 - [ ] Phase 6 – Automatik
 - [ ] Phase 7 – Livegang
