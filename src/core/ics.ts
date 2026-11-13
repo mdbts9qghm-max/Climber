@@ -4,7 +4,7 @@ import { addDays, addMin, toMin } from './dates'
 import { baseShift, cycleDay } from './shifts'
 import type { DayOverride, ISODate, Plan, Settings } from './types'
 
-const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
+const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n')
 const compact = (d: ISODate) => d.replace(/-/g, '')
 const hm = (t: string) => t.replace(':', '') + '00'
 
@@ -80,7 +80,7 @@ export function parseIcs(text: string): IcsEvent[] {
       if (idx < 0) continue
       const key = line.slice(0, idx).split(';')[0].toUpperCase()
       const val = line.slice(idx + 1)
-      if (key === 'SUMMARY') cur.summary = val.replace(/\\,/g, ',').replace(/\;/g, ';')
+      if (key === 'SUMMARY') cur.summary = val.replace(/\\,/g, ',').replace(/\\;/g, ';')
       if (key === 'DTSTART' || key === 'DTEND') {
         const m = val.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/)
         if (!m) continue

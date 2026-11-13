@@ -129,7 +129,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [syncStatus, setSyncStatus] = useState('lokal')
   const today = useToday()
   const stateRef = useRef(state)
-  stateRef.current = state
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
 
   const dispatch = useCallback((a: Action) => rawDispatch(a), [])
 

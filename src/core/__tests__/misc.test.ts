@@ -49,6 +49,12 @@ describe('.ics', () => {
     const n = plan.days.reduce((a, d) => a + d.sessions.length, 0)
     expect((ics.match(/BEGIN:VEVENT/g) ?? []).length).toBe(n)
   })
+  it('Sonderzeichen werden escaped und beim Import zurückgewandelt', () => {
+    const ics = exportIcs(plan)
+    expect(ics).not.toMatch(/DESCRIPTION:[^\r]*[^\\];/)
+    const ev = parseIcs('BEGIN:VEVENT\r\nSUMMARY:Tag\\; Nacht\\, Frei\r\nDTSTART:20261116T070000\r\nEND:VEVENT')
+    expect(ev[0].summary).toBe('Tag; Nacht, Frei')
+  })
   it('Import eines Dienstplans erzeugt nur Abweichungen als Overrides', () => {
     const text = ['BEGIN:VCALENDAR', 'BEGIN:VEVENT', 'SUMMARY:Tagdienst', 'DTSTART:20261116T070000', 'DTEND:20261116T190000', 'END:VEVENT', 'BEGIN:VEVENT', 'SUMMARY:V-Schicht', 'DTSTART:20261120T080000', 'END:VEVENT', 'BEGIN:VEVENT', 'SUMMARY:Urlaub', 'DTSTART;VALUE=DATE:20261126', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n')
     const ov = icsToOverrides(parseIcs(text), S)
