@@ -54,6 +54,9 @@ export interface Assessment {
   components: Partial<Record<keyof RecoveryWeights, number>>
   sleepHours: number | null
   sleepDebtH: number | null
+  hrv: number | null
+  rhr: number | null
+  baselines: Baselines
   triggers: string[]
   warning: string | null
   lastNightWork: boolean
@@ -83,6 +86,9 @@ export function assess(input: AssessInput): Assessment {
     components: {},
     sleepHours: null,
     sleepDebtH: null,
+    hrv: null,
+    rhr: null,
+    baselines: {},
     triggers: [],
     warning: null,
     lastNightWork,
@@ -140,6 +146,9 @@ export function assess(input: AssessInput): Assessment {
     components: comp,
     sleepHours,
     sleepDebtH: r.sleepDebtH ?? null,
+    hrv: r.hrv ?? null,
+    rhr: r.rhr ?? null,
+    baselines: b,
     triggers,
     warning: warningSignal([...history.filter((h) => h.date < input.date), r], addDays(input.date, 1)),
   }

@@ -247,7 +247,8 @@ function tryMove(
     // Ersetzen statt dazupacken (kein Nachholen von Umfang)
     const keep: Session[] = []
     for (const x of target.sessions) {
-      const replace = (x.key && prio(x) < prio(s)) || (moved.category === 'run' && x.category === 'run' && !x.key)
+      const cat = (c: Session['category']) => (c === 'test' ? 'strength' : c)
+      const replace = (x.key && prio(x) < prio(s)) || (!x.key && cat(moved.category) === cat(x.category) && moved.category !== 'mobility')
       if (replace) target.dropped.push({ session: x, reason: `Ersetzt durch verschobene Einheit „${s.title}“` })
       else keep.push(x)
     }

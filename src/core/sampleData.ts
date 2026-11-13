@@ -51,7 +51,7 @@ export function sampleWhoop(s: Settings, overrides: DayOverride[], from: ISODate
   for (let i = 0; i < days.length; i++) {
     const d = days[i]
     const next = days[i + 1]
-    if (d.kind === 'SLEEP_DAY') push(berlinToUtcMs(d.date, '08:05'), berlinToUtcMs(d.date, '13:50'), 45)
+    if (d.kind === 'SLEEP_DAY') push(berlinToUtcMs(d.date, '08:05'), berlinToUtcMs(d.date, '13:50'), 52)
     if (d.kind === 'NIGHT_SHIFT') {
       push(berlinToUtcMs(d.date, '15:00'), berlinToUtcMs(d.date, '16:30'), 0, true)
       continue
@@ -60,7 +60,7 @@ export function sampleWhoop(s: Settings, overrides: DayOverride[], from: ISODate
     const early = next.work && !next.work.endsNextDay
     const bed = early ? '21:50' : '22:40'
     const wake = early ? '05:55' : next.kind === 'NIGHT_SHIFT' ? '07:45' : '07:05'
-    push(berlinToUtcMs(d.date, bed), berlinToUtcMs(addDays(d.date, 1), wake), early ? 62 : 70)
+    push(berlinToUtcMs(d.date, bed), berlinToUtcMs(addDays(d.date, 1), wake), early ? 70 : 76)
   }
   // Zyklen schließen: Ende = Beginn des nächsten Zyklus
   cycles.sort((a, b) => Date.parse(a.start) - Date.parse(b.start))

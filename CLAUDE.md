@@ -36,7 +36,7 @@ Die vollständige Vorgabe ist die SPEC (vom Nutzer als PDF geliefert). Architekt
 ## Fortschritt
 - [x] Phase 1 – Planung (Architektur, Datenmodell, Algorithmen, CLAUDE.md, Git)
 - [x] Phase 2 – Kernlogik + Tests (86 Vitest-Tests, alle SPEC-11-Szenarien)
-- [ ] Phase 3 – Oberfläche
+- [x] Phase 3 – Oberfläche (alle Ansichten, Playwright-Check im iPhone-Format: `npm run e2e`)
 - [ ] Phase 4 – Supabase
 - [ ] Phase 5 – WHOOP
 - [ ] Phase 6 – Automatik

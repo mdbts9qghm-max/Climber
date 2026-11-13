@@ -17,6 +17,8 @@ export interface BuildCtx {
 const r1 = (x: number) => Math.round(x * 10) / 10
 const r5 = (x: number) => Math.max(5, Math.round(x / 5) * 5)
 const r10 = (x: number) => Math.round(x / 10) * 10
+/** km im Titel mit deutschem Komma */
+const k = (x: number) => String(r1(x)).replace('.', ',')
 
 export const SENSITIVITY: Record<SessionType, Sensitivity> = {
   HILL_INTERVALS: 'high',
@@ -117,7 +119,7 @@ export function easyRun(ctx: BuildCtx, km: number, opts: { abc?: boolean; hm?: n
   const hm = opts.hm ?? 0
   const d = runDuration(km, hm, ctx.settings.profile.easyPace)
   return make(ctx, 'EASY_RUN', {
-    title: `Lockerer Lauf ${r1(km)} km`,
+    title: `Lockerer Lauf ${k(km)} km`,
     goal: opts.abc ? 'Aerobe Grundlage aufbauen und Laufökonomie mit Lauf-ABC verbessern.' : 'Aerobe Grundlage aufbauen, ohne zu ermüden.',
     durationMin: d + (opts.abc ? 10 : 0),
     distanceKm: r1(km),
@@ -126,7 +128,7 @@ export function easyRun(ctx: BuildCtx, km: number, opts: { abc?: boolean; hm?: n
     structure: {
       warmup: ['5 min zügig gehen, dann locker einlaufen'],
       main: [
-        `${r1(km)} km locker, Nasenatmung möglich`,
+        `${k(km)} km locker, Nasenatmung möglich`,
         ...(hm > 0 ? [`davon ca. ${hm} hm: ${Math.max(10, Math.round(hm / 40))} min Laufband mit ${TREADMILL.inclinePct[ctx.phase]} % Steigung zügig gehen`] : []),
         ...(opts.abc ? ['10 min Lauf-ABC (Skippings, Anfersen, Hopserlauf) + 4 × 20 s Steigerungen'] : [])],
       cooldown: ['5 min auslaufen/gehen, Waden und Hüftbeuger dehnen'],
@@ -137,7 +139,7 @@ export function easyRun(ctx: BuildCtx, km: number, opts: { abc?: boolean; hm?: n
 
 export function recoveryRun(ctx: BuildCtx, km: number): Session {
   return make(ctx, 'RECOVERY_RUN', {
-    title: `Regenerationslauf ${r1(km)} km`,
+    title: `Regenerationslauf ${k(km)} km`,
     goal: 'Durchblutung fördern und Beine lockern – nur bei guter Erholung.',
     durationMin: runDuration(km, 0, ctx.settings.profile.easyPace + 0.5),
     distanceKm: r1(km),
@@ -155,7 +157,7 @@ export function longRun(ctx: BuildCtx, km: number, opts: { night?: boolean; star
   const gear = ctx.phase === 'build' || ctx.phase === 'specific'
   const type: SessionType = opts.night ? 'NIGHT_RUN' : 'LONG_RUN'
   return make(ctx, type, {
-    title: `${opts.night ? 'Nachtlauf' : 'Langer Lauf'} ${r1(km)} km`,
+    title: `${opts.night ? 'Nachtlauf' : 'Langer Lauf'} ${k(km)} km`,
     goal: opts.night
       ? 'Lange Zeit auf den Beinen in der Dunkelheit – Stirnlampe, Orientierung und Müdigkeit wie im Rennen.'
       : 'Ausdauer und Zeit auf den Beinen für 86 km aufbauen.',
@@ -186,7 +188,7 @@ export function b2bRun(ctx: BuildCtx, km: number): Session {
   const d = runDuration(km, hm, ctx.settings.profile.longPace)
   const carbs = fuelingFor(ctx.phase, d)
   return make(ctx, 'B2B_RUN', {
-    title: `Back-to-back ${r1(km)} km`,
+    title: `Back-to-back ${k(km)} km`,
     goal: 'Auf vorermüdeten Beinen laufen – simuliert die zweite Rennhälfte.',
     durationMin: d,
     distanceKm: r1(km),
@@ -212,7 +214,7 @@ export function mountainDay(ctx: BuildCtx, km: number, day: 1 | 2): Session {
   const d = day === 1 ? Math.max(runDuration(km, hm, ctx.settings.profile.longPace + 2), VOLUME.mountainDayHours[0] * 60) : runDuration(km, hm, ctx.settings.profile.longPace + 2)
   const carbs = fuelingFor(ctx.phase === 'intro' ? 'build' : ctx.phase, d)
   return make(ctx, 'MOUNTAIN_DAY', {
-    title: day === 1 ? `Bergtag ${Math.round(d / 60)} h (Generalprobe)` : `Bergtag 2 – ${r1(km)} km`,
+    title: day === 1 ? `Bergtag ${Math.round(d / 60)} h (Generalprobe)` : `Bergtag 2 – ${k(km)} km`,
     goal: day === 1 ? 'Echte Berge: lange bergauf gehen, technisch bergab laufen, komplette Rennausrüstung testen.' : 'Zweiter Bergtag auf müden Beinen – Bergab-Belastung und Regeneration über Nacht testen.',
     durationMin: d,
     distanceKm: r1(km),

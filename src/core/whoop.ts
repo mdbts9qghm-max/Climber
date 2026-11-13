@@ -154,17 +154,19 @@ export function recoveryForDay(day: ResolvedDay, data: WhoopData, now?: number):
 
 const round2 = (x: number | undefined) => (x === undefined ? undefined : Math.round(x * 100) / 100)
 
-/** Verlauf für einen Zeitraum: WHOOP wenn vorhanden, sonst manuelle Eingabe */
+/**
+ * Verlauf für einen Zeitraum: WHOOP, wenn vorhanden, sonst manuelle Eingabe.
+ * Eine manuelle Eingabe für einen Tag gilt als bewusste Korrektur und hat Vorrang;
+ * HRV/Ruhepuls von WHOOP bleiben dann für die Baselines erhalten.
+ */
 export function recoveryHistory(days: ResolvedDay[], data: WhoopData | null, manual: ManualRecovery[], now?: number): RecoveryDay[] {
   const manualBy = new Map(manual.map((m) => [m.date, m]))
   const out: RecoveryDay[] = []
   for (const d of days) {
     const w = data ? recoveryForDay(d, data, now) : undefined
-    if (w) out.push(w)
-    else {
-      const m = manualBy.get(d.date)
-      if (m) out.push({ date: d.date, source: 'manual', sleepHours: m.sleepHours, manual: m })
-    }
+    const m = manualBy.get(d.date)
+    if (m) out.push({ date: d.date, source: 'manual', sleepHours: m.sleepHours, manual: m, hrv: w?.hrv, rhr: w?.rhr, sleepDebtH: w?.sleepDebtH, sleepNeedH: w?.sleepNeedH })
+    else if (w) out.push(w)
   }
   return out
 }
