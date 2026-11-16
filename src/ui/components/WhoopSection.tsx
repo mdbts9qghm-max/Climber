@@ -5,12 +5,15 @@ import { WhoopConnectButton } from './WhoopConnect'
 import { Button, Card, Note, Section } from './ui'
 
 export function WhoopSection() {
-  const { whoop, whoopSource, refreshWhoop, setWhoop } = useStore()
+  const { whoop, whoopSource, refreshWhoop, setWhoop, syncStatus } = useStore()
   const [st, setSt] = useState<WhoopStatus | null>(null)
   const [msg, setMsg] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  // Status neu laden, sobald die automatische Anmeldung fertig ist
   useEffect(() => {
     whoopStatus().then(setSt)
+  }, [syncStatus])
+  useEffect(() => {
     const p = new URLSearchParams(location.search)
     const w = p.get('whoop')
     if (w === 'ok') setMsg('WHOOP verbunden – die letzten 60 Tage wurden geladen.')
@@ -27,7 +30,7 @@ export function WhoopSection() {
           {st?.connected ? (
             <span className="text-ok">verbunden</span>
           ) : (
-            <span className="text-muted">{!st?.configured ? 'Supabase nicht konfiguriert' : !st.loggedIn ? 'erst anmelden' : 'nicht verbunden'}</span>
+            <span className="text-muted">{!st?.configured ? 'Supabase nicht konfiguriert' : !st.loggedIn ? 'keine Datenbankverbindung' : 'nicht verbunden'}</span>
           )}
           {st?.lastSync && <span className="text-muted"> · letzter Abruf {new Date(st.lastSync).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' })}</span>}
         </div>

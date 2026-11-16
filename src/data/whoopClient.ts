@@ -26,7 +26,7 @@ export async function whoopStatus(): Promise<WhoopStatus> {
 
 export async function connectWhoop(): Promise<string | null> {
   const h = await authHeader()
-  if (!h || !functionsUrl) return 'Bitte zuerst anmelden (Konto & Synchronisation).'
+  if (!h || !functionsUrl) return 'Keine Verbindung zur Datenbank – App neu öffnen.'
   const res = await fetch(`${functionsUrl}/whoop-auth`, { method: 'POST', headers: h })
   const body = await res.json().catch(() => ({}))
   if (!res.ok || !body.url) return body.error ?? `Fehler ${res.status}`

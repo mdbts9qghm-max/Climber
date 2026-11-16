@@ -16,7 +16,7 @@ export function pushSupport(): { ok: boolean; reason?: string } {
   if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window))
     return { ok: false, reason: 'Dieser Browser unterstützt kein Web Push. Auf dem iPhone: App über „Teilen → Zum Home-Bildschirm“ installieren und von dort öffnen (iOS 16.4+).' }
   if (!VAPID) return { ok: false, reason: 'VITE_VAPID_PUBLIC_KEY fehlt (siehe docs/AUTOMATIK.md).' }
-  if (!supabase) return { ok: false, reason: 'Erinnerungen brauchen Supabase und eine Anmeldung.' }
+  if (!supabase) return { ok: false, reason: 'Erinnerungen brauchen Supabase.' }
   return { ok: true }
 }
 
@@ -29,7 +29,7 @@ export async function enablePush(): Promise<string | null> {
   const sub = (await reg.pushManager.getSubscription()) ?? (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(VAPID!) }))
   const { data } = await supabase!.auth.getSession()
   const uid = data.session?.user.id
-  if (!uid) return 'Bitte zuerst anmelden.'
+  if (!uid) return 'Keine Verbindung zur Datenbank – App neu öffnen.'
   const j = sub.toJSON() as { endpoint: string; keys: { p256dh: string; auth: string } }
   const { error } = await supabase!.from('push_subscriptions').upsert({ user_id: uid, endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth }, { onConflict: 'user_id,endpoint' })
   return error ? error.message : null

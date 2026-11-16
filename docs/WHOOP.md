@@ -1,6 +1,6 @@
 # WHOOP anbinden (Phase 5)
 
-Voraussetzung: Supabase ist eingerichtet (`docs/SUPABASE.md`) und du bist in der App angemeldet.
+Voraussetzung: Supabase ist eingerichtet (`docs/SUPABASE.md`) und die App ist verbunden (Einstellungen → Synchronisation: „synchronisiert“).
 Platzhalter `<REF>` = deine Supabase-Projekt-Referenz (steht in der Project URL `https://<REF>.supabase.co`).
 
 ## 1. App im WHOOP Developer Dashboard
@@ -35,7 +35,7 @@ Bis Phase 7 (Vercel) kannst du `APP_URL=http://localhost:5173` setzen und späte
 
 ## 3. Verbinden
 App → **Mehr → Einstellungen → WHOOP → Mit WHOOP verbinden** → bei WHOOP einloggen und zustimmen.
-Du landest wieder in den Einstellungen mit „WHOOP verbunden“. Die letzten 60 Tage werden sofort geladen
+Danach landest du wieder in den Einstellungen mit „WHOOP verbunden“. Falls sich dabei Safari statt der App öffnet: einfach die App vom Home-Bildschirm neu starten, die Verbindung ist trotzdem gespeichert. Die letzten 60 Tage werden sofort geladen
 (Baselines für HRV und Ruhepuls).
 
 ## So funktioniert es

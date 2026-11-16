@@ -32,7 +32,7 @@ lässt sich ein **Demo-Modus** mit Beispiel-Erholungsdaten einschalten. Zum Test
 ## Livegang in 4 Schritten
 | Schritt | Anleitung |
 |---|---|
-| 1. Supabase (Datenbank, Login, Sync) | [`docs/SUPABASE.md`](docs/SUPABASE.md) |
+| 1. Supabase (Datenbank, Sync – ohne Passwort) | [`docs/SUPABASE.md`](docs/SUPABASE.md) |
 | 2. WHOOP (OAuth, Webhooks) | [`docs/WHOOP.md`](docs/WHOOP.md) |
 | 3. Automatik (Zeitpläne, Push) | [`docs/AUTOMATIK.md`](docs/AUTOMATIK.md) |
 | 4. Vercel (Hosting) | unten |
@@ -44,7 +44,7 @@ lässt sich ein **Demo-Modus** mit Beispiel-Erholungsdaten einschalten. Zum Test
    - `VITE_SUPABASE_ANON_KEY`
    - `VITE_VAPID_PUBLIC_KEY` (optional, für Erinnerungen)
 3. **Deploy**. Die Produktions-URL dann eintragen:
-   - Supabase → Authentication → URL Configuration (Site URL + Redirect URL)
+   - Supabase → Authentication → URL Configuration (Site URL)
    - Supabase-Secret `APP_URL` (`supabase secrets set APP_URL=https://…`), damit WHOOP nach dem Login zurück in die App leitet.
 4. Auf dem iPhone in Safari öffnen → **Teilen → Zum Home-Bildschirm**. Die Heute-Ansicht ist danach auch offline lesbar.
 

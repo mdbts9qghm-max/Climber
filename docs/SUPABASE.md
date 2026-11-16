@@ -1,7 +1,6 @@
 # Supabase einrichten (Phase 4)
 
-Die App läuft ohne Supabase komplett lokal. Mit Supabase werden deine Daten gesichert und zwischen
-Geräten synchronisiert. Außerdem braucht die WHOOP-Anbindung (Phase 5) Supabase.
+Die App läuft ohne Supabase komplett lokal. Mit Supabase werden deine Daten in der Cloud gesichert. Außerdem braucht die WHOOP-Anbindung (Phase 5) Supabase.
 
 ## 1. Projekt anlegen
 1. <https://supabase.com/dashboard> → **New project**
@@ -13,18 +12,11 @@ Geräten synchronisiert. Außerdem braucht die WHOOP-Anbindung (Phase 5) Supabas
    Erwartet: „Success. No rows returned“ (Hinweise „policy … does not exist, skipping“ sind normal).
 3. Kontrolle: **Table Editor** zeigt u. a. `profiles`, `session_logs`, `whoop_connections`. Bei jeder Tabelle steht „RLS enabled“.
 
-## 3. Login per E-Mail-Code
-1. **Authentication → Sign In / Providers → Email**: aktiviert lassen.
-2. **Authentication → Emails → Templates → Magic Link**: im Text zusätzlich den Code einfügen, z. B.
-   ```html
-   <h2>Dein Anmeldecode</h2>
-   <p>Code: <strong>{{ .Token }}</strong></p>
-   <p>Oder <a href="{{ .ConfirmationURL }}">hier anmelden</a>.</p>
-   ```
-   Hintergrund: Auf dem iPhone öffnet der Link Safari, nicht die installierte App. Mit dem Code meldest du dich direkt in der App an.
-3. **Authentication → URL Configuration**
-   - Site URL: deine Vercel-URL (z. B. `https://ehrwald-trainer.vercel.app`; bis Phase 7: `http://localhost:5173`)
-   - Redirect URLs: `http://localhost:5173/**` und `https://DEINE-VERCEL-URL/**`
+## 3. Anmeldung ohne Passwort aktivieren
+Die App meldet sich beim ersten Start **automatisch und unsichtbar** an (anonyme Anmeldung). Du brauchst weder Passwort noch E-Mail.
+1. **Authentication → Sign In / Providers**: **„Allow anonymous sign-ins“ einschalten** → Save.
+2. „Allow new users to sign up“ muss **an** bleiben, sonst funktioniert die anonyme Anmeldung nicht.
+3. **Authentication → URL Configuration → Site URL**: deine Vercel-URL (bis dahin `http://localhost:5173`).
 
 ## 4. Schlüssel ins Frontend
 **Project Settings → API**:
@@ -36,15 +28,15 @@ Vercel: dieselben zwei Variablen unter *Project → Settings → Environment Var
 
 **Niemals** den `service_role`-Key ins Frontend oder ins Repo – der gehört nur in die Edge Functions (Phase 5, wird dort automatisch bereitgestellt).
 
-## 5. Anmelden und Daten umziehen
-1. App öffnen → **Mehr → Einstellungen → Konto & Synchronisation** → E-Mail eingeben → **Anmeldecode senden**.
-2. Code aus der Mail eingeben → **Anmelden**.
-3. Beim ersten Login ist die Datenbank leer: Die App lädt deine lokalen Daten automatisch hoch (Status „synchronisiert“). Zur Sicherheit kannst du **Lokale Daten jetzt hochladen (Umzug)** drücken.
-4. Kontrolle: Im **Table Editor → profiles** steht eine Zeile mit deiner `user_id`.
+## 5. Verbinden und Daten umziehen
+1. App öffnen. Auf dem iPhone **die installierte App vom Home-Bildschirm** verwenden, nicht Safari: Safari und die installierte App haben getrennte Speicher.
+2. Die App verbindet sich automatisch und lädt deine lokalen Daten hoch. Unter **Mehr → Einstellungen → Synchronisation** steht dann „synchronisiert“.
+3. Kontrolle: Im **Table Editor → profiles** steht eine Zeile. Unter **Authentication → Users** siehst du einen Nutzer „Anonymous“.
 
-## 6. Nur du darfst rein
-Wenn dein Konto existiert: **Authentication → Sign In / Providers → „Allow new users to sign up“ ausschalten**.
-Damit kann sich niemand sonst registrieren. RLS sorgt zusätzlich dafür, dass jede Zeile nur ihrem Besitzer gehört.
+## 6. Gut zu wissen
+- **Deine Daten sind trotzdem privat.** Row Level Security sorgt dafür, dass jede Zeile nur ihrem Besitzer gehört. Wer zufällig die URL öffnet, bekommt eine eigene, leere App und sieht nichts von dir.
+- **Die Anmeldung hängt am Gerät bzw. an der installierten App.** Löschst du die App vom Home-Bildschirm oder die Website-Daten, ist die Verbindung weg. Die Daten liegen zwar noch in Supabase, aber die neue App bekommt einen neuen leeren Zugang. Deshalb: **ab und zu unter Einstellungen → Export & Backup ein JSON-Backup speichern** (z. B. in iCloud Drive). Ein Import stellt alles wieder her. WHOOP musst du danach einmal neu verbinden.
+- Nutzer „Anonymous“ ohne Daten (z. B. vom Testen in Safari) kannst du unter **Authentication → Users** löschen.
 
 ## Was wo liegt
 | Tabelle | Inhalt | Zugriff Frontend |

@@ -66,6 +66,8 @@ export async function saveTokens(db: SupabaseClient, userId: string, t: TokenRes
     updated_at: new Date().toISOString(),
     ...(whoopUserId !== undefined ? { whoop_user_id: whoopUserId } : {}),
   }
+  // Neuinstallation (neuer anonymer Zugang): alte Verbindung desselben WHOOP-Kontos ablösen
+  if (whoopUserId) await db.from('whoop_connections').delete().eq('whoop_user_id', whoopUserId).neq('user_id', userId)
   const { error } = await db.from('whoop_connections').upsert(row, { onConflict: 'user_id' })
   if (error) throw error
 }

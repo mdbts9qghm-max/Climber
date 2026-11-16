@@ -123,11 +123,17 @@ export const remote: Remote = {
       onStatus('lokal (Supabase nicht konfiguriert)')
       return null
     }
+    // Ohne Passwort: beim ersten Start automatisch anonym anmelden. Die Sitzung bleibt auf dem Gerät gespeichert.
     const { data } = await supabase.auth.getSession()
     uid = data.session?.user.id ?? null
     if (!uid) {
-      onStatus('lokal (nicht angemeldet)')
-      return null
+      const { data: anon, error } = await supabase.auth.signInAnonymously()
+      uid = anon.user?.id ?? null
+      if (error || !uid) {
+        console.warn('Automatische Anmeldung fehlgeschlagen', error)
+        onStatus('lokal (automatische Anmeldung fehlgeschlagen – Anonymous Sign-Ins aktiviert?)')
+        return null
+      }
     }
     try {
       const st = await loadRemote(uid)

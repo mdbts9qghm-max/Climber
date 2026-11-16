@@ -25,6 +25,7 @@ Die vollständige Vorgabe ist die SPEC (vom Nutzer als PDF geliefert). Architekt
 - **Pulszonen** aus dem WHOOP-Profil (max. HF aus `body_measurement`), bis dahin Intensität nach Gefühl (RPE).
 - **Gerät: iPhone** → Web Push nur bei installierter PWA (iOS ≥ 16.4); Tests im iPhone-Viewport.
 - Supabase-, Vercel- und WHOOP-Developer-Accounts sind vorhanden.
+- **Kein Passwort/keine E-Mail für die App**: automatische anonyme Supabase-Anmeldung pro Gerät; Absicherung über RLS, Wiederherstellung über JSON-Backup.
 - Auslegung SPEC 6.3 vs. 6.3a: Eine Nachtschicht vor der Schlüsseleinheit **verstärkt** eine Vorausschau-Reduktion, löst sie aber allein nicht aus (sonst Widerspruch zu „Tag 2 grün = wie geplant“).
 
 ## Befehle
@@ -37,7 +38,7 @@ Die vollständige Vorgabe ist die SPEC (vom Nutzer als PDF geliefert). Architekt
 - [x] Phase 1 – Planung (Architektur, Datenmodell, Algorithmen, CLAUDE.md, Git)
 - [x] Phase 2 – Kernlogik + Tests (86 Vitest-Tests, alle SPEC-11-Szenarien)
 - [x] Phase 3 – Oberfläche (alle Ansichten, Playwright-Check im iPhone-Format: `npm run e2e`)
-- [x] Phase 4 – Supabase (Schema + RLS lokal gegen Postgres 16 geprüft, Login per E-Mail-Code, Sync, Umzug; Anleitung `docs/SUPABASE.md`)
+- [x] Phase 4 – Supabase (Schema + RLS lokal gegen Postgres 16 geprüft, anonyme Anmeldung ohne Passwort, Sync, Umzug; Anleitung `docs/SUPABASE.md`)
 - [x] Phase 5 – WHOOP (Edge Functions: OAuth, Sync mit Token-Refresh, Webhook mit Signaturprüfung; Deno-Tests; Anleitung `docs/WHOOP.md`)
 - [x] Phase 6 – Automatik (Webhooks, Abruf beim Öffnen + pg_cron, Web-Push-Erinnerungen, Service Worker offline; Anleitung `docs/AUTOMATIK.md`)
 - [x] Phase 7 – Livegang vorbereitet (PWA, vercel.json, .ics-Export, README). Offen beim Nutzer: Supabase-/WHOOP-/Vercel-Schritte laut docs ausführen

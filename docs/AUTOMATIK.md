@@ -33,6 +33,6 @@ supabase functions deploy push-reminders
 ## 3. Erinnerungen auf dem iPhone
 1. App in Safari öffnen → **Teilen → Zum Home-Bildschirm**.
 2. App **vom Home-Bildschirm** starten (nur dort gibt es Push, iOS 16.4+).
-3. Einstellungen → Konto anmelden → **Erinnerungen** einschalten → Benachrichtigungen erlauben.
+3. Einstellungen → **Erinnerungen** einschalten → Benachrichtigungen erlauben.
 
 Die App hinterlegt die Zeitpunkte der nächsten 3 Tage und aktualisiert sie, sobald sich Plan, Schicht oder Erholung ändern.
